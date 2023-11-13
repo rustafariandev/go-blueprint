@@ -137,6 +137,99 @@ var createCmd = &cobra.Command{
 	},
 }
 
+var createCmd2 = &cobra.Command{
+	Use:   "create2",
+	Short: "Create a Go project and don't worry about the structure",
+	Long:  "Go Blueprint is a CLI tool that allows you to focus on the actual Go code, and not the project structure. Perfect for someone new to the Go language",
+
+	Run: func(cmd *cobra.Command, args []string) {
+		var tprogram *tea.Program
+
+		options := steps.Options{
+			ProjectName: &textinput.Output{},
+		}
+
+		isInteractive := !utils.HasChangedFlag(cmd.Flags())
+
+		flagName := cmd.Flag("name").Value.String()
+		flagFramework := cmd.Flag("framework").Value.String()
+
+		if flagFramework != "" {
+			isValid := isValidProjectType(flagFramework, allowedProjectTypes)
+			if !isValid {
+				cobra.CheckErr(fmt.Errorf("Project type '%s' is not valid. Valid types are: %s", flagFramework, strings.Join(allowedProjectTypes, ", ")))
+			}
+		}
+
+		project := &program.Project{
+			FrameworkMap: make(map[string]program.Framework),
+			ProjectName:  flagName,
+			ProjectType:  strings.ReplaceAll(flagFramework, "-", " "),
+		}
+
+		steps := steps.InitSteps(&options)
+		fmt.Printf("%s\n", logoStyle.Render(logo))
+
+		if project.ProjectName == "" {
+			tprogram := tea.NewProgram(textinput.InitialTextInputModel(options.ProjectName, "What is the name of your project?", project))
+			if _, err := tprogram.Run(); err != nil {
+				log.Printf("Name of project contains an error: %v", err)
+				cobra.CheckErr(err)
+			}
+			project.ExitCLI(tprogram)
+
+			project.ProjectName = options.ProjectName.Output
+			err := cmd.Flag("name").Value.Set(project.ProjectName)
+			if err != nil {
+				log.Fatal("failed to set the name flag value", err)
+			}
+		}
+
+		if project.ProjectType == "" {
+			for _, step := range steps.Steps {
+				s := &multiInput.Selection{}
+				tprogram = tea.NewProgram(multiInput.InitialModelMulti(step.Options, s, step.Headers, project))
+				if _, err := tprogram.Run(); err != nil {
+					cobra.CheckErr(err)
+				}
+				project.ExitCLI(tprogram)
+
+				*step.Field = s.Choice
+			}
+
+			project.ProjectType = strings.ToLower(options.ProjectType)
+			err := cmd.Flag("framework").Value.Set(project.ProjectType)
+			if err != nil {
+				log.Fatal("failed to set the framework flag value", err)
+			}
+		}
+
+		currentWorkingDir, err := os.Getwd()
+		if err != nil {
+			log.Printf("could not get current working directory: %v", err)
+			cobra.CheckErr(err)
+		}
+
+		project.AbsolutePath = currentWorkingDir
+
+		// This calls the templates
+		err = project.CreateMainFile()
+		if err != nil {
+			log.Printf("Problem creating files for project. %v", err)
+			cobra.CheckErr(err)
+		}
+
+		fmt.Println(endingMsgStyle.Render("\nNext steps cd into the newly created project with:"))
+		fmt.Println(endingMsgStyle.Render(fmt.Sprintf("• cd %s\n", project.ProjectName)))
+
+		if isInteractive {
+			nonInteractiveCommand := utils.NonInteractiveCommand(cmd.Flags())
+			fmt.Println(tipMsgStyle.Render("Tip: Repeat the equivalent Blueprint with the following non-interactive command:"))
+			fmt.Println(tipMsgStyle.Italic(false).Render(fmt.Sprintf("• %s\n", nonInteractiveCommand)))
+		}
+	},
+}
+
 // isValidProjectType checks if the inputted project type matches
 // the currently supported list of project types
 func isValidProjectType(input string, allowedTypes []string) bool {
