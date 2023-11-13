@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/melkeydev/go-blueprint/cmd/program"
 	"github.com/melkeydev/go-blueprint/cmd/steps"
 	"github.com/melkeydev/go-blueprint/cmd/ui/multiInput"
@@ -16,36 +15,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const logo = `
-
- ____  _                       _       _   
-|  _ \| |                     (_)     | |  
-| |_) | |_   _  ___ _ __  _ __ _ _ __ | |_ 
-|  _ <| | | | |/ _ \ '_ \| '__| | '_ \| __|
-| |_) | | |_| |  __/ |_) | |  | | | | | |_ 
-|____/|_|\__,_|\___| .__/|_|  |_|_| |_|\__|
-				   | |                     
-				   |_|                     
-
-`
-
-var (
-	logoStyle           = lipgloss.NewStyle().Foreground(lipgloss.Color("#01FAC6")).Bold(true)
-	tipMsgStyle         = lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("190")).Italic(true)
-	endingMsgStyle      = lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("170")).Bold(true)
-	allowedProjectTypes = []string{"chi", "gin", "fiber", "gorilla/mux", "httprouter", "standard-library", "echo", "caddy"}
-)
-
 func init() {
-	rootCmd.AddCommand(createCmd)
+	rootCmd.AddCommand(createCmd2)
 
-	createCmd.Flags().StringP("name", "n", "", "Name of project to create")
-	createCmd.Flags().StringP("framework", "f", "", fmt.Sprintf("Framework to use. Allowed values: %s", strings.Join(allowedProjectTypes, ", ")))
+	createCmd2.Flags().StringP("name", "n", "", "Name of project to create")
+	createCmd2.Flags().StringP("framework", "f", "", fmt.Sprintf("Framework to use. Allowed values: %s", strings.Join(allowedProjectTypes, ", ")))
 }
 
-// createCmd defines the "create" command for the CLI
-var createCmd = &cobra.Command{
-	Use:   "create",
+// createCmd2 defines the "create2" command for the CLI
+var createCmd2 = &cobra.Command{
+	Use:   "create2",
 	Short: "Create a Go project and don't worry about the structure",
 	Long:  "Go Blueprint is a CLI tool that allows you to focus on the actual Go code, and not the project structure. Perfect for someone new to the Go language",
 
@@ -135,15 +114,4 @@ var createCmd = &cobra.Command{
 			fmt.Println(tipMsgStyle.Italic(false).Render(fmt.Sprintf("• %s\n", nonInteractiveCommand)))
 		}
 	},
-}
-
-// isValidProjectType checks if the inputted project type matches
-// the currently supported list of project types
-func isValidProjectType(input string, allowedTypes []string) bool {
-	for _, t := range allowedTypes {
-		if input == t {
-			return true
-		}
-	}
-	return false
 }
