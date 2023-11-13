@@ -14,6 +14,7 @@ import (
 	_ "github.com/melkeydev/go-blueprint/cmd/template/caddy"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/chi"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/echo"
+	_ "github.com/melkeydev/go-blueprint/cmd/template/fiber"
 	"github.com/melkeydev/go-blueprint/cmd/ui/multiInput"
 	"github.com/melkeydev/go-blueprint/cmd/ui/textinput"
 	"github.com/melkeydev/go-blueprint/cmd/utils"
