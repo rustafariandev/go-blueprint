@@ -3,7 +3,8 @@
 package steps
 
 import (
-	"fmt"
+	"cmp"
+	"slices"
 
 	textinput "github.com/melkeydev/go-blueprint/cmd/ui/textinput"
 )
@@ -86,7 +87,6 @@ func InitSteps(options *Options) *Steps {
 func GetSteps(options *Options) *Steps {
 	items := make([]Item, len(registeredFramworkOptions))
 	copy(items, registeredFramworkOptions)
-	fmt.Printf("%+v", registeredFramworkOptions)
 	steps := &Steps{
 		[]StepSchema{
 			{
@@ -103,4 +103,8 @@ func GetSteps(options *Options) *Steps {
 
 func RegisterFrameworkItems(items ...Item) {
 	registeredFramworkOptions = append(registeredFramworkOptions, items...)
+	slices.SortFunc(registeredFramworkOptions, func(a, b Item) int {
+		return cmp.Compare(a.Title, b.Title)
+	})
+
 }
