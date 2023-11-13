@@ -8,6 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/melkeydev/go-blueprint/cmd/utils"
+	"github.com/spf13/cobra"
 )
 
 type TemplateProvider struct {
@@ -44,6 +47,18 @@ func (tp *TemplateProvider) Create(p *Project) error {
 		log.Printf("Could not create directory: %v", err)
 		return err
 	}
+	// Create go.mod
+	err := utils.InitGoMod(p.ProjectName, projectPath)
+	if err != nil {
+		log.Printf("Could not initialize go.mod in new project %v\n", err)
+		cobra.CheckErr(err)
+	}
+
+	err = utils.GoGetPackage(projectPath, p.PackageNames)
+	if err != nil {
+		log.Printf("Could not install go dependency for the chosen framework %v\n", err)
+		cobra.CheckErr(err)
+	}
 
 	fs.WalkDir(
 		tp.TempateFS,
@@ -74,6 +89,28 @@ func (tp *TemplateProvider) Create(p *Project) error {
 			return tp.CopyFile(p, path)
 		},
 	)
+
+	// Initialize git repo
+	err = utils.ExecuteCmd("git", []string{"init"}, projectPath)
+	if err != nil {
+		log.Printf("Error initializing git repo: %v", err)
+		cobra.CheckErr(err)
+		return err
+	}
+
+	err = utils.GoModTidy(projectPath)
+	if err != nil {
+		log.Printf("Could not go mod tidy the new project %v\n", err)
+		cobra.CheckErr(err)
+		return err
+	}
+
+	err = utils.GoFmt(projectPath)
+	if err != nil {
+		log.Printf("Could not gofmt in new project %v\n", err)
+		cobra.CheckErr(err)
+		return err
+	}
 
 	return nil
 }
