@@ -25,7 +25,7 @@ type Project struct {
 }
 
 func (p *Project) CreateFile(path string) (*os.File, error) {
-	os.Create(filepath.Join(p.Absolute, path))
+	return os.Create(filepath.Join(p.AbsolutePath, path))
 }
 
 func (tp *TemplateProvider) Create(p *Project) error {
@@ -43,24 +43,48 @@ func (tp *TemplateProvider) Create(p *Project) error {
 		".",
 		func(path string, d fs.DirEntry, err error) error {
 			if d.IsDir() {
+				if path == "." {
+					return err
+				}
+
 				newDir := filepath.Join(p.AbsolutePath, path)
 				if err := os.Mkdir(newDir, 0754); err != nil {
-					log.Printf("Could not create directory %s: %v", newDir, err)
+					log.Printf("Could not create directory %s %s: %v", path, newDir, err)
 					return err
 				}
 				return err
 			}
+
 			if strings.HasSuffix(path, ".tmpl") {
 				err := tp.CreateFileFromTemplate(p, path)
 				if err != nil {
 					return err
 				}
+
+				return nil
 			}
-			return
+
+			return tp.CopyFile(p, path)
 		},
 	)
 
 	return nil
+}
+
+func (tp *TemplateProvider) CopyFile(p *Project, path string) error {
+	createdFile, err := p.CreateFile(path)
+	if err != nil {
+		return err
+	}
+	defer createdFile.Close()
+
+	data, err := tp.TempateFS.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	createdFile.Write(data)
+	return err
 }
 
 func (tp *TemplateProvider) CreateFileFromTemplate(p *Project, templ string) error {
@@ -76,6 +100,6 @@ func (tp *TemplateProvider) CreateFileFromTemplate(p *Project, templ string) err
 		return err
 	}
 
-	createdTemplate := template.Must(data)
+	createdTemplate := template.Must(template.New(templ).Parse(string(data)))
 	return createdTemplate.Execute(createdFile, p)
 }
