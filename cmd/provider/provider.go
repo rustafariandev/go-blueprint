@@ -26,7 +26,7 @@ type Project struct {
 }
 
 func (p *Project) CreateFile(path string) (*os.File, error) {
-	return os.Create(filepath.Join(p.AbsolutePath, path))
+	return os.Create(filepath.Join(p.AbsolutePath, p.ProjectName, path))
 }
 
 func (tp *TemplateProvider) Create(p *Project) error {
@@ -39,6 +39,12 @@ func (tp *TemplateProvider) Create(p *Project) error {
 		}
 	}
 
+	projectPath := filepath.Join(p.AbsolutePath, p.ProjectName)
+	if err := os.Mkdir(projectPath, 0754); err != nil {
+		log.Printf("Could not create directory: %v", err)
+		return err
+	}
+
 	fs.WalkDir(
 		tp.TempateFS,
 		".",
@@ -48,7 +54,7 @@ func (tp *TemplateProvider) Create(p *Project) error {
 					return err
 				}
 
-				newDir := filepath.Join(p.AbsolutePath, path)
+				newDir := filepath.Join(projectPath, path)
 				if err := os.Mkdir(newDir, 0754); err != nil {
 					log.Printf("Could not create directory %s %s: %v", path, newDir, err)
 					return err

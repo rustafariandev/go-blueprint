@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-//go:embed internal/*
+//go:embed internal/* TEST
 var test_fs embed.FS
 
 func TestProvider(t *testing.T) {
