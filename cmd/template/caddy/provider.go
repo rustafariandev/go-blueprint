@@ -4,6 +4,7 @@ import (
 	"embed"
 
 	"github.com/melkeydev/go-blueprint/cmd/provider"
+	"github.com/melkeydev/go-blueprint/cmd/steps"
 	"github.com/melkeydev/go-blueprint/cmd/template"
 )
 
@@ -23,4 +24,10 @@ func MakeProvider() *provider.TemplateProvider {
 
 func init() {
 	template.RegisterProvider("caddy", MakeProvider)
+	steps.RegisterFrameworkItems(
+		steps.Item{
+			Title: "Caddy",
+			Desc:  "Fast and extensible multi-platform HTTP/1-2-3 web server with automatic HTTPS",
+		},
+	)
 }

@@ -9,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/melkeydev/go-blueprint/cmd/program"
 	"github.com/melkeydev/go-blueprint/cmd/steps"
+	_ "github.com/melkeydev/go-blueprint/cmd/template/caddy"
 	"github.com/melkeydev/go-blueprint/cmd/ui/multiInput"
 	"github.com/melkeydev/go-blueprint/cmd/ui/textinput"
 	"github.com/melkeydev/go-blueprint/cmd/utils"
@@ -52,8 +53,9 @@ var createCmd2 = &cobra.Command{
 			ProjectName:  flagName,
 			ProjectType:  strings.ReplaceAll(flagFramework, "-", " "),
 		}
+		ProjectName := flagName
+		ProjectType := strings.ReplaceAll(flagFramework, "-", " ")
 
-		steps := steps.InitSteps(&options)
 		fmt.Printf("%s\n", logoStyle.Render(logo))
 
 		if project.ProjectName == "" {
@@ -71,6 +73,7 @@ var createCmd2 = &cobra.Command{
 			}
 		}
 
+		steps := steps.GetSteps(&options)
 		if project.ProjectType == "" {
 			for _, step := range steps.Steps {
 				s := &multiInput.Selection{}

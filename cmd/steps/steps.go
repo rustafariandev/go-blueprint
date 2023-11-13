@@ -2,7 +2,11 @@
 // each step of the CLI
 package steps
 
-import textinput "github.com/melkeydev/go-blueprint/cmd/ui/textinput"
+import (
+	"fmt"
+
+	textinput "github.com/melkeydev/go-blueprint/cmd/ui/textinput"
+)
 
 // A StepSchema contains the data that is used
 // for an individual step of the CLI
@@ -29,6 +33,8 @@ type Options struct {
 	ProjectName *textinput.Output
 	ProjectType string
 }
+
+var registeredFramworkOptions = []Item{}
 
 // InitSteps initializes and returns the *Steps to be used in the CLI program
 func InitSteps(options *Options) *Steps {
@@ -75,4 +81,26 @@ func InitSteps(options *Options) *Steps {
 	}
 
 	return steps
+}
+
+func GetSteps(options *Options) *Steps {
+	items := make([]Item, len(registeredFramworkOptions))
+	copy(items, registeredFramworkOptions)
+	fmt.Printf("%+v", registeredFramworkOptions)
+	steps := &Steps{
+		[]StepSchema{
+			{
+				StepName: "Go Project Framework",
+				Options:  items,
+				Headers:  "What framework do you want to use in your Go project?",
+				Field:    &options.ProjectType,
+			},
+		},
+	}
+
+	return steps
+}
+
+func RegisterFrameworkItems(items ...Item) {
+	registeredFramworkOptions = append(registeredFramworkOptions, items...)
 }
