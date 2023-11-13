@@ -13,6 +13,7 @@ import (
 type TemplateProvider struct {
 	TempateFS    embed.FS
 	PackageNames []string
+	ProjectType  string
 }
 
 // A Project contains the data for the project folder
