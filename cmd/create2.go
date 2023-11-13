@@ -8,7 +8,9 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/melkeydev/go-blueprint/cmd/program"
+	"github.com/melkeydev/go-blueprint/cmd/provider"
 	"github.com/melkeydev/go-blueprint/cmd/steps"
+	"github.com/melkeydev/go-blueprint/cmd/template"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/caddy"
 	"github.com/melkeydev/go-blueprint/cmd/ui/multiInput"
 	"github.com/melkeydev/go-blueprint/cmd/ui/textinput"
@@ -58,7 +60,7 @@ var createCmd2 = &cobra.Command{
 
 		fmt.Printf("%s\n", logoStyle.Render(logo))
 
-		if project.ProjectName == "" {
+		if ProjectName == "" {
 			tprogram := tea.NewProgram(textinput.InitialTextInputModel(options.ProjectName, "What is the name of your project?", project))
 			if _, err := tprogram.Run(); err != nil {
 				log.Printf("Name of project contains an error: %v", err)
@@ -66,7 +68,7 @@ var createCmd2 = &cobra.Command{
 			}
 			project.ExitCLI(tprogram)
 
-			project.ProjectName = options.ProjectName.Output
+			ProjectName = options.ProjectName.Output
 			err := cmd.Flag("name").Value.Set(project.ProjectName)
 			if err != nil {
 				log.Fatal("failed to set the name flag value", err)
@@ -74,7 +76,7 @@ var createCmd2 = &cobra.Command{
 		}
 
 		steps := steps.GetSteps(&options)
-		if project.ProjectType == "" {
+		if ProjectType == "" {
 			for _, step := range steps.Steps {
 				s := &multiInput.Selection{}
 				tprogram = tea.NewProgram(multiInput.InitialModelMulti(step.Options, s, step.Headers, project))
@@ -86,11 +88,17 @@ var createCmd2 = &cobra.Command{
 				*step.Field = s.Choice
 			}
 
-			project.ProjectType = strings.ToLower(options.ProjectType)
+			ProjectType = strings.ToLower(options.ProjectType)
 			err := cmd.Flag("framework").Value.Set(project.ProjectType)
 			if err != nil {
 				log.Fatal("failed to set the framework flag value", err)
 			}
+		}
+
+		tp, err := template.GetProvider(ProjectType)
+		if err != nil {
+			log.Printf("Problem getting provider for project. %v", err)
+			cobra.CheckErr(err)
 		}
 
 		currentWorkingDir, err := os.Getwd()
@@ -100,9 +108,15 @@ var createCmd2 = &cobra.Command{
 		}
 
 		project.AbsolutePath = currentWorkingDir
+		err = tp.Create(&provider.Project{
+			ProjectName:  ProjectName,
+			AbsolutePath: currentWorkingDir,
+			ProjectType:  ProjectType,
+			PackageNames: tp.PackageNames,
+		})
 
 		// This calls the templates
-		err = project.CreateMainFile()
+		//		err = project.CreateMainFile()
 		if err != nil {
 			log.Printf("Problem creating files for project. %v", err)
 			cobra.CheckErr(err)
