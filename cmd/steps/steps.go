@@ -35,7 +35,7 @@ type Options struct {
 	ProjectType string
 }
 
-var registeredFramworkOptions = []Item{}
+var registeredFrameworkItems = []Item{}
 
 // InitSteps initializes and returns the *Steps to be used in the CLI program
 func InitSteps(options *Options) *Steps {
@@ -85,8 +85,8 @@ func InitSteps(options *Options) *Steps {
 }
 
 func GetSteps(options *Options) *Steps {
-	items := make([]Item, len(registeredFramworkOptions))
-	copy(items, registeredFramworkOptions)
+	items := make([]Item, len(registeredFrameworkItems))
+	copy(items, registeredFrameworkItems)
 	steps := &Steps{
 		[]StepSchema{
 			{
@@ -102,8 +102,8 @@ func GetSteps(options *Options) *Steps {
 }
 
 func RegisterFrameworkItems(items ...Item) {
-	registeredFramworkOptions = append(registeredFramworkOptions, items...)
-	slices.SortFunc(registeredFramworkOptions, func(a, b Item) int {
+	registeredFrameworkItems = append(registeredFrameworkItems, items...)
+	slices.SortFunc(registeredFrameworkItems, func(a, b Item) int {
 		return cmp.Compare(a.Title, b.Title)
 	})
 
