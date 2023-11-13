@@ -13,6 +13,7 @@ import (
 	"github.com/melkeydev/go-blueprint/cmd/template"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/caddy"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/chi"
+	_ "github.com/melkeydev/go-blueprint/cmd/template/echo"
 	"github.com/melkeydev/go-blueprint/cmd/ui/multiInput"
 	"github.com/melkeydev/go-blueprint/cmd/ui/textinput"
 	"github.com/melkeydev/go-blueprint/cmd/utils"
