@@ -17,6 +17,7 @@ import (
 	_ "github.com/melkeydev/go-blueprint/cmd/template/fiber"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/gin"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/gorilla"
+	_ "github.com/melkeydev/go-blueprint/cmd/template/httprouter"
 	"github.com/melkeydev/go-blueprint/cmd/ui/multiInput"
 	"github.com/melkeydev/go-blueprint/cmd/ui/textinput"
 	"github.com/melkeydev/go-blueprint/cmd/utils"
