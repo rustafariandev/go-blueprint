@@ -13,6 +13,7 @@ import (
 	"github.com/melkeydev/go-blueprint/cmd/template"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/caddy"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/chi"
+	_ "github.com/melkeydev/go-blueprint/cmd/template/cobra"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/echo"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/fiber"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/gin"
