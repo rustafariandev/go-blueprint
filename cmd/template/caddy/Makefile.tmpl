@@ -9,7 +9,7 @@ build:
 
 # Run the application
 run:
-	@go run cmd/api/main.go
+	@go run cmd/api/main.go run -a caddyfile -c cmd/api/api.conf
 
 # Test the application
 test:
