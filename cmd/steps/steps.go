@@ -26,7 +26,7 @@ type Steps struct {
 // An Item contains the data for each option
 // in a StepSchema.Options
 type Item struct {
-	Title, Desc string
+	Title, Desc, Value string
 }
 
 // Options contains the name and type of the created project
@@ -47,32 +47,42 @@ func InitSteps(options *Options) *Steps {
 					{
 						Title: "Standard library",
 						Desc:  "The built-in Go standard library HTTP package",
+						Value: "standard-library",
 					},
 					{
 						Title: "Chi",
 						Desc:  "A lightweight, idiomatic and composable router for building Go HTTP services",
+						Value: "chi",
 					},
 					{
 						Title: "Gin",
 						Desc:  "Features a martini-like API with performance that is up to 40 times faster thanks to httprouter",
+						Value: "gin",
 					},
 					{
 						Title: "Fiber",
 						Desc:  "An Express inspired web framework built on top of Fasthttp",
+						Value: "fiber",
 					},
 					{
 						Title: "Gorilla/Mux",
 						Desc:  "Package gorilla/mux implements a request router and dispatcher for matching incoming requests to their respective handler",
+						Value: "gorilla/mux",
 					},
 					{
 						Title: "HttpRouter",
 						Desc:  "HttpRouter is a lightweight high performance HTTP request router for Go",
+						Value: "httprouter",
 					},
-					{Title: "Echo",
-						Desc: "High performance, extensible, minimalist Go web framework",
+					{
+						Title: "Echo",
+						Desc:  "High performance, extensible, minimalist Go web framework",
+						Value: "echo",
 					},
-					{Title: "Caddy",
-						Desc: "Fast and extensible multi-platform HTTP/1-2-3 web server with automatic HTTPS",
+					{
+						Title: "Caddy",
+						Desc:  "Fast and extensible multi-platform HTTP/1-2-3 web server with automatic HTTPS",
+						Value: "caddy",
 					},
 				},
 				Headers: "What framework do you want to use in your Go project?",
