@@ -25,6 +25,7 @@ func init() {
 		steps.Item{
 			Title: "HttpRouter",
 			Desc:  "HttpRouter is a lightweight high performance HTTP request router for Go",
+			Value: "httprouter",
 		},
 	)
 }

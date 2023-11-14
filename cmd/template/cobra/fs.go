@@ -25,6 +25,7 @@ func init() {
 		steps.Item{
 			Title: "Cobra",
 			Desc:  "A library for creating powerful modern CLI applications",
+			Value: "cobra",
 		},
 	)
 }

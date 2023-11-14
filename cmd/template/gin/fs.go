@@ -27,6 +27,7 @@ func init() {
 		steps.Item{
 			Title: "Gin",
 			Desc:  "Features a martini-like API with performance that is up to 40 times faster thanks to httprouter",
+			Value: "gin",
 		},
 	)
 }

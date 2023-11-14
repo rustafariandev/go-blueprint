@@ -51,20 +51,13 @@ var createCmd2 = &cobra.Command{
 		flagName := cmd.Flag("name").Value.String()
 		flagFramework := cmd.Flag("framework").Value.String()
 
-		if flagFramework != "" {
-			isValid := isValidProjectType(flagFramework, allowedProjectTypes)
-			if !isValid {
-				cobra.CheckErr(fmt.Errorf("Project type '%s' is not valid. Valid types are: %s", flagFramework, strings.Join(allowedProjectTypes, ", ")))
-			}
-		}
-
 		project := &program.Project{
 			FrameworkMap: make(map[string]program.Framework),
 			ProjectName:  flagName,
 			ProjectType:  strings.ReplaceAll(flagFramework, "-", " "),
 		}
 		ProjectName := flagName
-		ProjectType := strings.ReplaceAll(flagFramework, "-", " ")
+		ProjectType := flagFramework
 
 		fmt.Printf("%s\n", logoStyle.Render(logo))
 
@@ -96,7 +89,7 @@ var createCmd2 = &cobra.Command{
 				*step.Field = s.Choice
 			}
 
-			ProjectType = strings.ToLower(options.ProjectType)
+			ProjectType = options.ProjectType
 			err := cmd.Flag("framework").Value.Set(ProjectType)
 			if err != nil {
 				log.Fatal("failed to set the framework flag value", err)

@@ -25,6 +25,7 @@ func init() {
 		steps.Item{
 			Title: "Fiber",
 			Desc:  "An Express inspired web framework built on top of Fasthttp",
+			Value: "fiber",
 		},
 	)
 }

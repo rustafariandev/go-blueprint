@@ -27,6 +27,7 @@ func init() {
 		steps.Item{
 			Title: "Gorilla/Mux",
 			Desc:  "Package gorilla/mux implements a request router and dispatcher for matching incoming requests to their respective handler",
+			Value: "gorilla/mux",
 		},
 	)
 }

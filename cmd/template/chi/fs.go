@@ -27,6 +27,7 @@ func init() {
 		steps.Item{
 			Title: "Chi",
 			Desc:  "A lightweight, idiomatic and composable router for building Go HTTP services",
+			Value: "chi",
 		},
 	)
 }

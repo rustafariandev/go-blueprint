@@ -89,7 +89,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "y":
 			if len(m.selected) == 1 {
-				m.choice.Update(m.choices[m.cursor].Title)
+				m.choice.Update(m.choices[m.cursor].Value)
 				return m, tea.Quit
 			}
 		}

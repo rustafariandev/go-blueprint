@@ -55,6 +55,7 @@ func RegisterProviderFromFS(filesys fs.FS) error {
 		steps.Item{
 			Title: config.Title,
 			Desc:  config.Description,
+			Value: config.Name,
 		},
 	)
 

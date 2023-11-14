@@ -28,6 +28,7 @@ func init() {
 		steps.Item{
 			Title: "Echo",
 			Desc:  "High performance, extensible, minimalist Go web framework",
+			Value: "echo",
 		},
 	)
 }

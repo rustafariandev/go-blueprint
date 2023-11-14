@@ -20,11 +20,12 @@ func MakeProvider() *provider.TemplateProvider {
 }
 
 func init() {
-	registry.RegisterFramework("standard library", MakeProvider)
+	registry.RegisterFramework("standard-library", MakeProvider)
 	steps.RegisterFrameworkItems(
 		steps.Item{
 			Title: "Standard library",
 			Desc:  "The built-in Go standard library HTTP package",
+			Value: "standard-library",
 		},
 	)
 }
