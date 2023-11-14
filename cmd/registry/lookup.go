@@ -1,8 +1,8 @@
 package registry
 
 import (
-	"embed"
 	"errors"
+	"io/fs"
 
 	"github.com/BurntSushi/toml"
 	"github.com/melkeydev/go-blueprint/cmd/provider"
@@ -31,8 +31,8 @@ func RegisterFramework(name string, f func() *provider.TemplateProvider) {
 	lookup[name] = f
 }
 
-func RegisterProviderFromFS(fs embed.FS) error {
-	bytes, err := fs.ReadFile("blueprint.toml")
+func RegisterProviderFromFS(filesys fs.FS) error {
+	bytes, err := fs.ReadFile(filesys, "blueprint.toml")
 	if err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func RegisterProviderFromFS(fs embed.FS) error {
 
 	lookup[config.Name] = func() *provider.TemplateProvider {
 		return &provider.TemplateProvider{
-			TempateFS:    fs,
+			TempateFS:    filesys,
 			PackageNames: config.Packages,
 			ProjectType:  config.Name,
 		}

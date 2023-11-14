@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"embed"
 	"io/fs"
 	"log"
 	"os"
@@ -14,7 +13,7 @@ import (
 )
 
 type TemplateProvider struct {
-	TempateFS    embed.FS
+	TempateFS    fs.FS
 	PackageNames []string
 	ProjectType  string
 }
@@ -122,7 +121,7 @@ func (tp *TemplateProvider) CopyFile(p *Project, path string) error {
 	}
 	defer createdFile.Close()
 
-	data, err := tp.TempateFS.ReadFile(path)
+	data, err := fs.ReadFile(tp.TempateFS, path)
 	if err != nil {
 		return err
 	}
@@ -139,7 +138,7 @@ func (tp *TemplateProvider) CreateFileFromTemplate(p *Project, templ string) err
 	}
 
 	defer createdFile.Close()
-	data, err := tp.TempateFS.ReadFile(templ)
+	data, err := fs.ReadFile(tp.TempateFS, templ)
 	if err != nil {
 		return err
 	}
