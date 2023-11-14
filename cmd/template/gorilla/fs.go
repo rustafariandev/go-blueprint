@@ -4,8 +4,8 @@ import (
 	"embed"
 
 	"github.com/melkeydev/go-blueprint/cmd/provider"
+	"github.com/melkeydev/go-blueprint/cmd/registry"
 	"github.com/melkeydev/go-blueprint/cmd/steps"
-	"github.com/melkeydev/go-blueprint/cmd/template"
 )
 
 //go:embed internal cmd all:*.tmpl
@@ -22,7 +22,7 @@ func MakeProvider() *provider.TemplateProvider {
 }
 
 func init() {
-	template.RegisterProvider("gorilla/mux", MakeProvider)
+	registry.RegisterFramework("gorilla/mux", MakeProvider)
 	steps.RegisterFrameworkItems(
 		steps.Item{
 			Title: "Gorilla/Mux",

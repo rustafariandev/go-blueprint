@@ -9,8 +9,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/melkeydev/go-blueprint/cmd/program"
 	"github.com/melkeydev/go-blueprint/cmd/provider"
+	"github.com/melkeydev/go-blueprint/cmd/registry"
 	"github.com/melkeydev/go-blueprint/cmd/steps"
-	"github.com/melkeydev/go-blueprint/cmd/template"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/caddy"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/chi"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/cobra"
@@ -103,7 +103,7 @@ var createCmd2 = &cobra.Command{
 			}
 		}
 
-		tp, err := template.GetProvider(ProjectType)
+		tp, err := registry.GetFramework(ProjectType)
 		if err != nil {
 			log.Printf("Problem getting provider for project. %v", err)
 			cobra.CheckErr(err)
