@@ -77,13 +77,13 @@ func (tp *TemplateProvider) Create(p *Project) error {
 				return err
 			}
 
-			if strings.HasSuffix(path, ".tmpl") {
-				err := tp.CreateFileFromTemplate(p, path)
-				if err != nil {
-					return err
-				}
-
+			// Skipping the config file
+			if d.Name() == "blueprint.toml" {
 				return nil
+			}
+
+			if strings.HasSuffix(path, ".tmpl") {
+				return tp.CreateFileFromTemplate(p, path)
 			}
 
 			return tp.CopyFile(p, path)
