@@ -42,7 +42,7 @@ func (tp *TemplateProvider) Create(p *Project) error {
 	}
 
 	projectPath := filepath.Join(p.AbsolutePath, p.ProjectName)
-	if err := os.Mkdir(projectPath, 0754); err != nil {
+	if err := os.MkdirAll(projectPath, 0754); err != nil {
 		log.Printf("Could not create directory: %v", err)
 		return err
 	}
