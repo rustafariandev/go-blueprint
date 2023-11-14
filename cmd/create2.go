@@ -18,6 +18,7 @@ import (
 	_ "github.com/melkeydev/go-blueprint/cmd/template/gin"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/gorilla"
 	_ "github.com/melkeydev/go-blueprint/cmd/template/httprouter"
+	_ "github.com/melkeydev/go-blueprint/cmd/template/standard-library"
 	"github.com/melkeydev/go-blueprint/cmd/ui/multiInput"
 	"github.com/melkeydev/go-blueprint/cmd/ui/textinput"
 	"github.com/melkeydev/go-blueprint/cmd/utils"
@@ -75,7 +76,7 @@ var createCmd2 = &cobra.Command{
 			project.ExitCLI(tprogram)
 
 			ProjectName = options.ProjectName.Output
-			err := cmd.Flag("name").Value.Set(project.ProjectName)
+			err := cmd.Flag("name").Value.Set(ProjectName)
 			if err != nil {
 				log.Fatal("failed to set the name flag value", err)
 			}
@@ -95,7 +96,7 @@ var createCmd2 = &cobra.Command{
 			}
 
 			ProjectType = strings.ToLower(options.ProjectType)
-			err := cmd.Flag("framework").Value.Set(project.ProjectType)
+			err := cmd.Flag("framework").Value.Set(ProjectType)
 			if err != nil {
 				log.Fatal("failed to set the framework flag value", err)
 			}
@@ -129,7 +130,7 @@ var createCmd2 = &cobra.Command{
 		}
 
 		fmt.Println(endingMsgStyle.Render("\nNext steps cd into the newly created project with:"))
-		fmt.Println(endingMsgStyle.Render(fmt.Sprintf("• cd %s\n", project.ProjectName)))
+		fmt.Println(endingMsgStyle.Render(fmt.Sprintf("• cd %s\n", ProjectName)))
 
 		if isInteractive {
 			nonInteractiveCommand := utils.NonInteractiveCommand(cmd.Flags())
