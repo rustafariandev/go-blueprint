@@ -1,0 +1,5 @@
+name = "chi"
+title = "Chi"
+group = "servers/http"
+description = "A lightweight, idiomatic and composable router for building Go HTTP services"
+packages = [ "github.com/go-chi/chi/v5" ]

@@ -1,0 +1,5 @@
+name = "cobra"
+title = "Cobra"
+group = "cli/cli"
+description = "A library for creating powerful modern CLI applications"
+packages = [ "github.com/spf13/cobra" ]

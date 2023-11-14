@@ -1,0 +1,5 @@
+name = "httprouter"
+title = "HttpRouter"
+group = "servers/http"
+description = "HttpRouter is a lightweight high performance HTTP request router for Go"
+packages = [ "github.com/julienschmidt/httprouter" ]
