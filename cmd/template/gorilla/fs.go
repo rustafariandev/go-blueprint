@@ -1,4 +1,4 @@
-package chi
+package gorilla
 
 import (
 	"embed"

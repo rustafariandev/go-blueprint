@@ -1,4 +1,4 @@
-package chi
+package http_standard_library
 
 import (
 	"embed"
