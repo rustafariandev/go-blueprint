@@ -12,7 +12,7 @@ func (i *Item) ToggleSelected() {
 }
 
 func (i *Item) Selected() bool {
-	return selected
+	return i.selected
 }
 
 func (i *Item) Title() string {
