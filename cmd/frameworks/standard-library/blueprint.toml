@@ -1,5 +1,6 @@
 name = "standard-library"
 title = "Standard HTTP library"
+type = "framework"
 group = "servers/http"
 description = "The built-in Go standard library HTTP package"
 packages = []

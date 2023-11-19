@@ -1,5 +1,6 @@
 name = "gin"
 title = "Gin"
+type = "framework"
 group = "servers/http"
 description = "Features a martini-like API with performance that is up to 40 times faster thanks to httprouter"
 packages = [ "github.com/gin-gonic/gin" ]

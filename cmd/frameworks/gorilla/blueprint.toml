@@ -1,5 +1,6 @@
 name = "gorilla/mux"
 title = "Gorilla/Mux"
+type = "framework"
 group = "servers/http"
 description = "Package gorilla/mux implements a request router and dispatcher for matching incoming requests to their respective handler"
 packages = [ "github.com/gorilla/mux" ]

@@ -1,5 +1,6 @@
 name = "echo"
 title = "Echo"
+type = "framework"
 group = "servers/http"
 description = "High performance, extensible, minimalist Go web framework"
 packages = [ "github.com/labstack/echo/v4", "github.com/labstack/echo/v4/middleware" ]

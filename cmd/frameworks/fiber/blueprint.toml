@@ -1,5 +1,6 @@
 name = "fiber"
 title = "Fiber"
+type = "framework"
 group = "servers/http"
 description = "An Express inspired web framework built on top of Fasthttp"
 packages = [ "github.com/gofiber/fiber/v2" ]

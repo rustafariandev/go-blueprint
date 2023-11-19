@@ -1,5 +1,6 @@
 name = "httprouter"
 title = "HttpRouter"
+type = "framework"
 group = "servers/http"
 description = "HttpRouter is a lightweight high performance HTTP request router for Go"
 packages = [ "github.com/julienschmidt/httprouter" ]

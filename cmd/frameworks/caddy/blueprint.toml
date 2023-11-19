@@ -1,5 +1,6 @@
 name = "caddy"
 title = "Caddy"
+type = "framework"
 group = "servers/http"
 description = "Fast and extensible multi-platform HTTP/1-2-3 web server with automatic HTTPS"
 packages = [ "github.com/caddyserver/caddy/v2", "github.com/caddyserver/caddy/v2/cmd" ]

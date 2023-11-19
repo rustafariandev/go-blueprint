@@ -25,6 +25,7 @@ type BlueprintConfig struct {
 	Title       string   `toml:"title"`
 	Group       string   `toml:"group"`
 	Description string   `toml:"description"`
+	Type        string   `toml:"type"`
 	Packages    []string `toml:"packages"`
 }
 
