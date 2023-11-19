@@ -9,7 +9,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/melkeydev/go-blueprint/cmd/provider"
 	"github.com/melkeydev/go-blueprint/cmd/registry"
-	"github.com/melkeydev/go-blueprint/cmd/steps"
 	"github.com/melkeydev/go-blueprint/cmd/ui/inputoptions"
 	"github.com/melkeydev/go-blueprint/cmd/utils"
 	"github.com/spf13/cobra"
@@ -39,14 +38,20 @@ var (
 
 type CreateOptions struct {
 	ListFrameworks bool
+	ListAddons     bool
 	ProjectName    string
 	Framework      string
+}
+
+func (o *CreateOptions) DoListing() bool {
+	return o.ListFrameworks || o.ListAddons
 }
 
 func (o *CreateOptions) SetFlags(f *pflag.FlagSet) {
 	f.StringVarP(&o.ProjectName, "name", "n", o.ProjectName, "Name of project to create")
 	f.StringVarP(&o.Framework, "framework", "f", o.Framework, "Framework to use - To see aviailable options use create -l")
 	f.BoolVarP(&o.ListFrameworks, "list", "l", o.ListFrameworks, "List aviailable frameworks")
+	f.BoolVarP(&o.ListAddons, "list-addons", "a", o.ListFrameworks, "List aviailable addons")
 }
 
 func init() {
@@ -54,12 +59,22 @@ func init() {
 	options.SetFlags(createCmd.Flags())
 }
 
-func (o *CreateOptions) ListAllowFrameworks() {
-	for _, i := range steps.GetItems() {
-		fmt.Printf("%s\n", i.Value)
+func (o *CreateOptions) List() {
+
+	if o.ListFrameworks {
+		fmt.Printf("Frameworks\n")
+		for _, i := range registry.GetFrameworkItems() {
+			fmt.Printf("* %s\n", i.Value)
+		}
 	}
 
-	os.Exit(0)
+	if o.ListAddons {
+		fmt.Printf("Addons\n")
+		for _, i := range registry.GetAddonItems() {
+			fmt.Printf("* %s\n", i.Value)
+		}
+	}
+
 }
 
 func (o *CreateOptions) Verify() error {
@@ -80,7 +95,7 @@ func (o *CreateOptions) AskForOptions() bool {
 
 func (o *CreateOptions) GetModelOption() inputoptions.ModelOptions {
 	options := inputoptions.ModelOptions{
-		Items:      steps.GetItems(),
+		Items:      registry.GetFrameworkItems(),
 		Header:     "What is the name of your project?",
 		ListHeader: "What framework do you want to use in your Go project?",
 	}
@@ -105,8 +120,9 @@ var createCmd = &cobra.Command{
 
 		isInteractive := !utils.HasChangedFlag(cmd.Flags())
 
-		if options.ListFrameworks {
-			options.ListAllowFrameworks()
+		if options.DoListing() {
+			options.List()
+			os.Exit(0)
 		}
 
 		if err := options.Verify(); err != nil {
