@@ -7,6 +7,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/melkeydev/go-blueprint/cmd/provider"
 	"github.com/melkeydev/go-blueprint/cmd/steps"
+	"github.com/melkeydev/go-blueprint/cmd/ui/inputoptions"
 )
 
 var lookup = map[string]func() *provider.TemplateProvider{}
@@ -31,6 +32,11 @@ func RegisterFramework(name string, f func() *provider.TemplateProvider) {
 	lookup[name] = f
 }
 
+func HasFramework(name string) bool {
+	_, b := lookup[name]
+	return b
+}
+
 func RegisterProviderFromFS(filesys fs.FS) error {
 	bytes, err := fs.ReadFile(filesys, "blueprint.toml")
 	if err != nil {
@@ -52,8 +58,8 @@ func RegisterProviderFromFS(filesys fs.FS) error {
 	}
 
 	steps.RegisterFrameworkItems(
-		steps.Item{
-			Title: config.Title,
+		&inputoptions.Item{
+			Name:  config.Title,
 			Desc:  config.Description,
 			Value: config.Name,
 		},
