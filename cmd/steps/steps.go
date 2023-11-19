@@ -6,6 +6,7 @@ import (
 	"cmp"
 	"slices"
 
+	"github.com/melkeydev/go-blueprint/cmd/ui/inputoptions"
 	textinput "github.com/melkeydev/go-blueprint/cmd/ui/textinput"
 )
 
@@ -35,7 +36,7 @@ type Options struct {
 	ProjectType string
 }
 
-var registeredFrameworkItems = []Item{}
+var registeredFrameworkItems = []inputoptions.Item{}
 
 // InitSteps initializes and returns the *Steps to be used in the CLI program
 func InitSteps(options *Options) *Steps {
@@ -94,21 +95,8 @@ func InitSteps(options *Options) *Steps {
 	return steps
 }
 
-func GetSteps(options *Options) *Steps {
-	items := make([]Item, len(registeredFrameworkItems))
-	copy(items, registeredFrameworkItems)
-	steps := &Steps{
-		[]StepSchema{
-			{
-				StepName: "Go Project Framework",
-				Options:  items,
-				Headers:  "What framework do you want to use in your Go project?",
-				Field:    &options.ProjectType,
-			},
-		},
-	}
-
-	return steps
+func GetItems() []inputoptions.Item {
+	return registeredFrameworkItems
 }
 
 func RegisterFrameworkItems(items ...Item) {
