@@ -235,18 +235,18 @@ func NewItemDelegate(out *string) list.DefaultDelegate {
 				index := m.Index()
 				for i := 0; i < index; i++ {
 					if item, ok := items[i].(*Item); ok {
-						item.Selected = false
+						item.selected = false
 					}
 				}
 
 				item.ToggleSelected()
 				for i := index + 1; i < len(items); i++ {
 					if item, ok := items[i].(*Item); ok {
-						item.Selected = false
+						item.selected = false
 					}
 				}
 
-				if item.Selected {
+				if item.Selected() {
 					*out = item.Value
 					return m.NewStatusMessage(statusMessageStyle("You choose " + title))
 				} else {

@@ -4,15 +4,19 @@ import "fmt"
 
 type Item struct {
 	Name, Desc, Filter, Value string
-	Selected                  bool
+	selected                  bool
 }
 
 func (i *Item) ToggleSelected() {
-	i.Selected = !i.Selected
+	i.selected = !i.selected
+}
+
+func (i *Item) Selected() bool {
+	return selected
 }
 
 func (i *Item) Title() string {
-	if i.Selected {
+	if i.selected {
 		return fmt.Sprintf("[x] %s", i.Name)
 	}
 
