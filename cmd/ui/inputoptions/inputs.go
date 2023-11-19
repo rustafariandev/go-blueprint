@@ -52,6 +52,7 @@ var (
 	statusMessageStyle = lipgloss.NewStyle().
 				Foreground(lipgloss.AdaptiveColor{Light: "#04B575", Dark: "#04B575"}).
 				Render
+	errorStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("1"))
 )
 
 type Model struct {
@@ -79,6 +80,10 @@ type ModelOptions struct {
 	ListHeader string
 	ShowList   bool
 	SkipList   bool
+}
+
+func ValidateName(string) error {
+	return nil
 }
 
 func NewModel(options ModelOptions) Model {
@@ -138,7 +143,7 @@ func (m Model) inputUpdate(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.Type {
 		case tea.KeyEnter:
 			s := m.input.Value()
-			if s != "" {
+			if s != "" || m.input.Err == nil {
 				m.input.Blur()
 				m.showList = true
 				m.output.Name = m.input.Value()
@@ -197,6 +202,10 @@ func (m Model) inputView() string {
 	b.WriteString("\n\n")
 	b.WriteString(m.input.View())
 	b.WriteString("\n\n")
+	if m.input.Err != nil {
+		b.WriteString(errorStyle.Render(m.input.Err.Error()))
+	}
+
 	return b.String()
 }
 
