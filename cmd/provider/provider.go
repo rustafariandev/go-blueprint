@@ -76,10 +76,22 @@ func (tp *TemplateProvider) Create(p *Project, runOptions *RunOptions) error {
 				}
 
 				newDir := filepath.Join(projectPath, path)
-				if err := os.Mkdir(newDir, 0754); err != nil {
-					log.Printf("Could not create directory %s %s: %v", path, newDir, err)
-					return err
+				if mkdirErr := os.Mkdir(newDir, 0754); mkdirErr != nil {
+					if os.IsExist(mkdirErr) {
+						stat, statError := os.Stat(newDir)
+						if statError != nil {
+							return statError
+						}
+
+						if stat.IsDir() {
+							return nil
+						}
+					}
+
+					log.Printf("Could not create directory %s %s: %v", path, newDir, mkdirErr)
+					return mkdirErr
 				}
+
 				return err
 			}
 
