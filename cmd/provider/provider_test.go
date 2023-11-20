@@ -21,5 +21,5 @@ func TestProvider(t *testing.T) {
 	tp := TemplateProvider{TempateFS: test_fs}
 	p := &Project{ProjectName: "test", AbsolutePath: dir}
 	fmt.Printf("create dir %s\n", dir)
-	tp.Create(p)
+	tp.Create(p, &RunOptions{})
 }
