@@ -1,0 +1,32 @@
+package client
+
+import (
+	"database/sql"
+	"errors"
+	"os"
+
+	_ "github.com/go-sql-driver/mysql"
+)
+
+const DSN_ENV_NAME = "DSN"
+
+func GetSqlDBFromEnv() (*sql.DB, error) {
+	dsn := os.Getenv(DSN_ENV_NAME)
+	return GetSqlDBFromDSN(dsn)
+}
+
+func GetSqlDBFromDSN(dsn string) (*sql.DB, error) {
+	if dsn == "" {
+		return nil, errors.New("Empty DSN")
+	}
+
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, err
+	}
+
+	db.SetConnMaxLifetime(0)
+	db.SetMaxIdleConns(50)
+	db.SetMaxOpenConns(50)
+	return db, nil
+}

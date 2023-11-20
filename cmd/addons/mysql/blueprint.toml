@@ -1,0 +1,6 @@
+name = "mysql"
+title = "MySQL"
+type = "addon"
+group = "client/mysql"
+description = "Create a sql.DB MySQL client "
+packages = []
