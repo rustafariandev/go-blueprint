@@ -1,0 +1,6 @@
+name = "go-redis"
+title = "Go Redis"
+type = "addon"
+group = "client/redis"
+description = "Create a redis client"
+packages = []

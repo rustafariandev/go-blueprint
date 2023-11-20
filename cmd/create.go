@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -41,6 +42,7 @@ type CreateOptions struct {
 	ListAddons     bool
 	ProjectName    string
 	Framework      string
+	Addons         []string
 }
 
 func (o *CreateOptions) DoListing() bool {
@@ -50,8 +52,9 @@ func (o *CreateOptions) DoListing() bool {
 func (o *CreateOptions) SetFlags(f *pflag.FlagSet) {
 	f.StringVarP(&o.ProjectName, "name", "n", o.ProjectName, "Name of project to create")
 	f.StringVarP(&o.Framework, "framework", "f", o.Framework, "Framework to use - To see aviailable options use create -l")
+	f.StringArrayVarP(&o.Addons, "addon", "a", o.Addons, "Addon to use can be used multiple times - To see aviailable options use create -A")
 	f.BoolVarP(&o.ListFrameworks, "list", "l", o.ListFrameworks, "List aviailable frameworks")
-	f.BoolVarP(&o.ListAddons, "list-addons", "a", o.ListFrameworks, "List aviailable addons")
+	f.BoolVarP(&o.ListAddons, "list-addons", "A", o.ListFrameworks, "List aviailable addons")
 }
 
 func init() {
@@ -84,6 +87,16 @@ func (o *CreateOptions) Verify() error {
 
 	if !registry.HasFramework(o.Framework) {
 		return fmt.Errorf("Framework %s is not invalid", o.Framework)
+	}
+
+	var addonsNotFound = []string{}
+	for _, a := range o.Addons {
+		if !registry.HasAddon(a) {
+			addonsNotFound = append(addonsNotFound, a)
+		}
+	}
+	if len(addonsNotFound) > 0 {
+		return fmt.Errorf("Addons %s not found", strings.Join(addonsNotFound, ", "))
 	}
 
 	return nil
@@ -176,16 +189,41 @@ var createCmd = &cobra.Command{
 			cobra.CheckErr(err)
 		}
 
-		err = tp.Create(&provider.Project{
-			ProjectName:  options.ProjectName,
-			AbsolutePath: currentWorkingDir,
-			ProjectType:  options.Framework,
-			PackageNames: tp.PackageNames,
-		})
-
-		if err != nil {
+		if err := tp.Create(
+			&provider.Project{
+				ProjectName:  options.ProjectName,
+				AbsolutePath: currentWorkingDir,
+				ProjectType:  options.Framework,
+				PackageNames: tp.PackageNames,
+			},
+			&provider.RunOptions{
+				SkipInitialization: false,
+			},
+		); err != nil {
 			log.Printf("Problem creating files for project. %v", err)
 			cobra.CheckErr(err)
+		}
+
+		for _, a := range options.Addons {
+			tp, err := registry.GetAddon(a)
+			if err != nil {
+				log.Printf("Problem getting a. %v", err)
+				cobra.CheckErr(err)
+			}
+			if err := tp.Create(
+				&provider.Project{
+					ProjectName:  options.ProjectName,
+					AbsolutePath: currentWorkingDir,
+					ProjectType:  options.Framework,
+					PackageNames: tp.PackageNames,
+				},
+				&provider.RunOptions{
+					SkipInitialization: true,
+				},
+			); err != nil {
+				log.Printf("Problem creating files for project. %v", err)
+				cobra.CheckErr(err)
+			}
 		}
 
 		fmt.Println(endingMsgStyle.Render("\nNext steps cd into the newly created project with:"))

@@ -27,36 +27,43 @@ type Project struct {
 	PackageNames []string
 }
 
+type RunOptions struct {
+	SkipInitialization bool
+}
+
 func (p *Project) CreateFile(path string) (*os.File, error) {
 	return os.Create(filepath.Join(p.AbsolutePath, p.ProjectName, path))
 }
 
-func (tp *TemplateProvider) Create(p *Project) error {
-	// check if s
-	if _, err := os.Stat(p.AbsolutePath); os.IsNotExist(err) {
-		// create directory
-		if err := os.Mkdir(p.AbsolutePath, 0754); err != nil {
+func (tp *TemplateProvider) Create(p *Project, runOptions *RunOptions) error {
+	projectPath := filepath.Join(p.AbsolutePath, p.ProjectName)
+
+	if !runOptions.SkipInitialization {
+		// check if s
+		if _, err := os.Stat(p.AbsolutePath); os.IsNotExist(err) {
+			// create directory
+			if err := os.Mkdir(p.AbsolutePath, 0754); err != nil {
+				log.Printf("Could not create directory: %v", err)
+				return err
+			}
+		}
+
+		if err := os.MkdirAll(projectPath, 0754); err != nil {
 			log.Printf("Could not create directory: %v", err)
 			return err
 		}
-	}
+		// Create go.mod
+		err := utils.InitGoMod(p.ProjectName, projectPath)
+		if err != nil {
+			log.Printf("Could not initialize go.mod in new project %v\n", err)
+			cobra.CheckErr(err)
+		}
 
-	projectPath := filepath.Join(p.AbsolutePath, p.ProjectName)
-	if err := os.MkdirAll(projectPath, 0754); err != nil {
-		log.Printf("Could not create directory: %v", err)
-		return err
-	}
-	// Create go.mod
-	err := utils.InitGoMod(p.ProjectName, projectPath)
-	if err != nil {
-		log.Printf("Could not initialize go.mod in new project %v\n", err)
-		cobra.CheckErr(err)
-	}
-
-	err = utils.GoGetPackage(projectPath, p.PackageNames)
-	if err != nil {
-		log.Printf("Could not install go dependency for the chosen framework %v\n", err)
-		cobra.CheckErr(err)
+		err = utils.GoGetPackage(projectPath, p.PackageNames)
+		if err != nil {
+			log.Printf("Could not install go dependency for the chosen framework %v\n", err)
+			cobra.CheckErr(err)
+		}
 	}
 
 	fs.WalkDir(
@@ -89,23 +96,22 @@ func (tp *TemplateProvider) Create(p *Project) error {
 		},
 	)
 
-	// Initialize git repo
-	err = utils.ExecuteCmd("git", []string{"init"}, projectPath)
-	if err != nil {
-		log.Printf("Error initializing git repo: %v", err)
-		cobra.CheckErr(err)
-		return err
+	if !runOptions.SkipInitialization {
+		// Initialize git repo
+		if err := utils.ExecuteCmd("git", []string{"init"}, projectPath); err != nil {
+			log.Printf("Error initializing git repo: %v", err)
+			cobra.CheckErr(err)
+			return err
+		}
 	}
 
-	err = utils.GoModTidy(projectPath)
-	if err != nil {
+	if err := utils.GoModTidy(projectPath); err != nil {
 		log.Printf("Could not go mod tidy the new project %v\n", err)
 		cobra.CheckErr(err)
 		return err
 	}
 
-	err = utils.GoFmt(projectPath)
-	if err != nil {
+	if err := utils.GoFmt(projectPath); err != nil {
 		log.Printf("Could not gofmt in new project %v\n", err)
 		cobra.CheckErr(err)
 		return err
