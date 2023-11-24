@@ -17,25 +17,10 @@ import (
 	"github.com/spf13/pflag"
 )
 
-const logo = `
-
- ____  _                       _       _   
-|  _ \| |                     (_)     | |  
-| |_) | |_   _  ___ _ __  _ __ _ _ __ | |_ 
-|  _ <| | | | |/ _ \ '_ \| '__| | '_ \| __|
-| |_) | | |_| |  __/ |_) | |  | | | | | |_ 
-|____/|_|\__,_|\___| .__/|_|  |_|_| |_|\__|
-                                  | |
-                                  |_|
-
-`
-
 var (
-	logoStyle           = lipgloss.NewStyle().Foreground(lipgloss.Color("#01FAC6")).Bold(true)
-	tipMsgStyle         = lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("190")).Italic(true)
-	endingMsgStyle      = lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("170")).Bold(true)
-	allowedProjectTypes = []string{"chi", "gin", "fiber", "gorilla/mux", "httprouter", "standard-library", "echo", "caddy", "cobra"}
-	options             = CreateOptions{}
+	tipMsgStyle    = lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("190")).Italic(true)
+	endingMsgStyle = lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("170")).Bold(true)
+	options        = CreateOptions{}
 )
 
 type CreateOptions struct {

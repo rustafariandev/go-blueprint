@@ -68,7 +68,7 @@ func (tp *TemplateProvider) Create(p *Project, runOptions *RunOptions) error {
 		}
 	}
 
-	fs.WalkDir(
+	if err := fs.WalkDir(
 		tp.TempateFS,
 		".",
 		func(path string, d fs.DirEntry, err error) error {
@@ -108,7 +108,9 @@ func (tp *TemplateProvider) Create(p *Project, runOptions *RunOptions) error {
 
 			return tp.CopyFile(p, path)
 		},
-	)
+	); err != nil {
+		return err
+	}
 
 	if !runOptions.SkipInitialization {
 		// Initialize git repo
@@ -146,7 +148,7 @@ func (tp *TemplateProvider) CopyFile(p *Project, path string) error {
 		return err
 	}
 
-	createdFile.Write(data)
+	_, err = createdFile.Write(data)
 	return err
 }
 

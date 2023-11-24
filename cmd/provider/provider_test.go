@@ -21,5 +21,8 @@ func TestProvider(t *testing.T) {
 	tp := TemplateProvider{TempateFS: test_fs}
 	p := &Project{ProjectName: "test", AbsolutePath: dir}
 	fmt.Printf("create dir %s\n", dir)
-	tp.Create(p, &RunOptions{})
+	err = tp.Create(p, &RunOptions{})
+	if err != nil {
+		t.Fatalf("%s", err.Error())
+	}
 }
