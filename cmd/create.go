@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -42,6 +43,7 @@ type CreateOptions struct {
 	ListAddons     bool
 	ProjectName    string
 	Framework      string
+	Output         string
 	Addons         []string
 }
 
@@ -51,6 +53,7 @@ func (o *CreateOptions) DoListing() bool {
 
 func (o *CreateOptions) SetFlags(f *pflag.FlagSet) {
 	f.StringVarP(&o.ProjectName, "name", "n", o.ProjectName, "Name of project to create")
+	f.StringVarP(&o.Output, "output", "o", o.Output, "Ouput")
 	f.StringVarP(&o.Framework, "framework", "f", o.Framework, "Framework to use - To see aviailable options use create -l")
 	f.StringArrayVarP(&o.Addons, "addon", "a", o.Addons, "Addon to use can be used multiple times - To see aviailable options use create -A")
 	f.BoolVarP(&o.ListFrameworks, "list", "l", o.ListFrameworks, "List aviailable frameworks")
@@ -143,10 +146,10 @@ var createCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		flagName := cmd.Flag("name").Value.String()
 		flagFramework := cmd.Flag("framework").Value.String()
+		flagOutputDir := cmd.Flag("output").Value.String()
+		_ = flagOutputDir
 
-		ProjectName := flagName
 		ProjectType := flagFramework
 
 		if options.AskForOptions() {
@@ -183,16 +186,20 @@ var createCmd = &cobra.Command{
 			cobra.CheckErr(err)
 		}
 
-		currentWorkingDir, err := os.Getwd()
-		if err != nil {
-			log.Printf("could not get current working directory: %v", err)
-			cobra.CheckErr(err)
+		if options.Output == "" {
+			currentWorkingDir, err := os.Getwd()
+			if err != nil {
+				log.Printf("could not get current working directory: %v", err)
+				cobra.CheckErr(err)
+			}
+
+			options.Output = filepath.Join(currentWorkingDir, options.ProjectName)
 		}
 
 		if err := tp.Create(
 			&provider.Project{
 				ProjectName:  options.ProjectName,
-				AbsolutePath: currentWorkingDir,
+				AbsolutePath: options.Output,
 				ProjectType:  options.Framework,
 				PackageNames: tp.PackageNames,
 			},
@@ -213,7 +220,7 @@ var createCmd = &cobra.Command{
 			if err := tp.Create(
 				&provider.Project{
 					ProjectName:  options.ProjectName,
-					AbsolutePath: currentWorkingDir,
+					AbsolutePath: options.Output,
 					ProjectType:  options.Framework,
 					PackageNames: tp.PackageNames,
 				},
@@ -227,7 +234,7 @@ var createCmd = &cobra.Command{
 		}
 
 		fmt.Println(endingMsgStyle.Render("\nNext steps cd into the newly created project with:"))
-		fmt.Println(endingMsgStyle.Render(fmt.Sprintf("• cd %s\n", ProjectName)))
+		fmt.Println(endingMsgStyle.Render(fmt.Sprintf("• cd %s\n", options.Output)))
 
 		if isInteractive {
 			nonInteractiveCommand := utils.NonInteractiveCommand(cmd.Flags())

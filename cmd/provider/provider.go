@@ -32,34 +32,36 @@ type RunOptions struct {
 }
 
 func (p *Project) CreateFile(path string) (*os.File, error) {
-	return os.Create(filepath.Join(p.AbsolutePath, p.ProjectName, path))
+	return os.Create(filepath.Join(p.AbsolutePath, path))
 }
 
 func (tp *TemplateProvider) Create(p *Project, runOptions *RunOptions) error {
-	projectPath := filepath.Join(p.AbsolutePath, p.ProjectName)
+	//	projectPath := filepath.Join(p.AbsolutePath, p.ProjectName)
+	if mkdirErr := os.MkdirAll(p.AbsolutePath, 0754); mkdirErr != nil {
+		if os.IsExist(mkdirErr) {
+			stat, statError := os.Stat(p.AbsolutePath)
+			if statError != nil {
+				return statError
+			}
 
-	if !runOptions.SkipInitialization {
-		// check if s
-		if _, err := os.Stat(p.AbsolutePath); os.IsNotExist(err) {
-			// create directory
-			if err := os.Mkdir(p.AbsolutePath, 0754); err != nil {
-				log.Printf("Could not create directory: %v", err)
-				return err
+			if !stat.IsDir() {
+				return mkdirErr
 			}
 		}
 
-		if err := os.MkdirAll(projectPath, 0754); err != nil {
-			log.Printf("Could not create directory: %v", err)
-			return err
-		}
+		log.Printf("Could not create directory %s: %v", p.AbsolutePath, mkdirErr)
+		return mkdirErr
+	}
+
+	if !runOptions.SkipInitialization {
 		// Create go.mod
-		err := utils.InitGoMod(p.ProjectName, projectPath)
+		err := utils.InitGoMod(p.ProjectName, p.AbsolutePath)
 		if err != nil {
 			log.Printf("Could not initialize go.mod in new project %v\n", err)
 			cobra.CheckErr(err)
 		}
 
-		err = utils.GoGetPackage(projectPath, p.PackageNames)
+		err = utils.GoGetPackage(p.AbsolutePath, p.PackageNames)
 		if err != nil {
 			log.Printf("Could not install go dependency for the chosen framework %v\n", err)
 			cobra.CheckErr(err)
@@ -75,7 +77,7 @@ func (tp *TemplateProvider) Create(p *Project, runOptions *RunOptions) error {
 					return err
 				}
 
-				newDir := filepath.Join(projectPath, path)
+				newDir := filepath.Join(p.AbsolutePath, path)
 				if mkdirErr := os.Mkdir(newDir, 0754); mkdirErr != nil {
 					if os.IsExist(mkdirErr) {
 						stat, statError := os.Stat(newDir)
@@ -110,20 +112,20 @@ func (tp *TemplateProvider) Create(p *Project, runOptions *RunOptions) error {
 
 	if !runOptions.SkipInitialization {
 		// Initialize git repo
-		if err := utils.ExecuteCmd("git", []string{"init"}, projectPath); err != nil {
+		if err := utils.ExecuteCmd("git", []string{"init"}, p.AbsolutePath); err != nil {
 			log.Printf("Error initializing git repo: %v", err)
 			cobra.CheckErr(err)
 			return err
 		}
 	}
 
-	if err := utils.GoModTidy(projectPath); err != nil {
+	if err := utils.GoModTidy(p.AbsolutePath); err != nil {
 		log.Printf("Could not go mod tidy the new project %v\n", err)
 		cobra.CheckErr(err)
 		return err
 	}
 
-	if err := utils.GoFmt(projectPath); err != nil {
+	if err := utils.GoFmt(p.AbsolutePath); err != nil {
 		log.Printf("Could not gofmt in new project %v\n", err)
 		cobra.CheckErr(err)
 		return err
